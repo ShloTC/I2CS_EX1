@@ -201,4 +201,159 @@ class Ex1Test {
 		double area = 58.5658;
 		assertEquals(a1,area, Ex1.EPS);
 	}
+    /**
+     * Test the PolynomFromPoints function - one test for each possible outcome (either ^2 or ^3)
+     */
+    @Test
+    public void testPolynomFromTwoPoints() {
+        // Line passing through points (1,3) and (3,7)
+        double[] xx = {1, 3};
+        double[] yy = {3, 7};
+
+        double[] p = Ex1.PolynomFromPoints(xx, yy);
+
+        // Expected line: f(x) = 2x + 1
+        assertEquals(1, p[0], 1.0/1000);  // b
+        assertEquals(2, p[1], 1.0/1000);  // a
+
+        // Check values at sample points
+        assertEquals(3, Ex1.f(p, 1), 1.0/1000);
+        assertEquals(7, Ex1.f(p, 3), 1.0/1000);
+    }
+    @Test
+    void testPolynomFromThreePoints() {
+        // Points from the quadratic f(x) = 2x^2 - 3x + 5
+        double[] xx = {0, 1, 2};
+        double[] yy = {5, 2*1*1 - 3*1 + 5, 2*4 - 6 + 5}; // corresponding f(x) coordinates for each x in xx
+
+        double[] p = Ex1.PolynomFromPoints(xx, yy);
+
+        // Expected coefficients: c=5, b=-3, a=2
+        assertEquals(5,  p[0], 1.0/1000);
+        assertEquals(-3, p[1], 1.0/1000);
+        assertEquals(2,  p[2], 1.0/1000);
+
+        // Check that f(p, x) matches original function
+        for (int x = 0; x <= 2; x++) {
+            double expected = 2*x*x - 3*x + 5;
+            assertEquals(expected, Ex1.f(p, x), 1.0/1000);
+        }
+    }
+    //============================================================
+    /* testing functions for each "is equal" scenario */
+    @Test
+    void testEqualSimpleLinear() {
+        double[] p1 = {2, 3};      // 3x + 2
+        double[] p2 = {2, 3};      // 3x + 2
+        assertTrue(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testEqualDifferentLengthsButSamePolynomial() {
+        double[] p1 = {2, 3};        // 3x + 2
+        double[] p2 = {2, 3, 0, 0};  // 3x + 2 (same function)
+        assertTrue(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testNotEqualDifferentCoefficients() {
+        double[] p1 = {2, 3};      // 3x + 2
+        double[] p2 = {2, 4};      // 4x + 2
+        assertFalse(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testEqualQuadratic() {
+        double[] p1 = {5, -3, 2};       // 2x^2 - 3x + 5
+        double[] p2 = {5, -3, 2};       // same
+        assertTrue(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testNotEqualQuadratic() {
+        double[] p1 = {5, -3, 2};       // 2x^2 - 3x + 5
+        double[] p2 = {5, -3, 2.001};   // slightly different a
+        assertFalse(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testEqualWithinEps() {
+        double[] p1 = {2, 3};         // 3x + 2
+        double[] p2 = {2.0005, 3.0004}; // differences < EPS = 0.001
+        assertTrue(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testNotEqualBeyondEps() {
+        double[] p1 = {2, 3};
+        double[] p2 = {2.002, 3}; // difference in c0 = 0.002 > EPS
+        assertFalse(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testDifferentDegreesButNotSameFunction() {
+        double[] p1 = {1};         // 1
+        double[] p2 = {1, 0, 0, 1}; // x^3 + 1
+        assertFalse(Ex1.equals(p1, p2));
+    }
+
+    @Test
+    void testNullCases() {
+        assertFalse(Ex1.equals(null, new double[]{1}));
+        assertFalse(Ex1.equals(new double[]{1}, null));
+        assertFalse(Ex1.equals(null, null));
+    }
+    // Testers for function sameValue
+    @Test
+    void testSameValueSimpleLinear() {
+        // p1(x) = x
+        double[] p1 = {0, 1};
+
+        // p2(x) = 3 - x
+        double[] p2 = {3, -1};
+
+        // They cross at x = 1.5
+        double x = Ex1.sameValue(p1, p2, 0, 3, 1.0/1000);
+
+        assertEquals(1.5, x, 1.0/1000);
+    }
+
+    @Test
+    void testSameValueQuadraticAndLine() {
+        // p1(x) = x^2
+        double[] p1 = {0, 0, 1};
+
+        // p2(x) = x
+        double[] p2 = {0, 1};
+
+        // Solve x^2 = 2x + 1 => (x-1)^2 = 0 => intersection at x = 1
+        double x = Ex1.sameValue(p1, p2, 0, 3, 1.0/1000);
+
+        assertEquals(0.0, x, 1.0/1000);
+    }
+
+    @Test
+    void testSameValueIntersectionAtLeftSide() {
+        // p1(x) = 2x
+        double[] p1 = {0, 2};
+
+        // p2(x) = x
+        double[] p2 = {0, 1};
+
+        // They meet at x = 0
+        double x = Ex1.sameValue(p1, p2, 0, 2, 1.0/1000);
+
+        assertEquals(0.0, x, 1.0/1000);
+    }
+
+    @Test
+    void testSameValueAlternateFunctions() {
+        double[] p1 = {-3, 1}; // x-3
+        double[] p2 = {0};     // 0
+
+        double x = Ex1.sameValue(p1, p2, 1, 5, 1.0/1000);
+
+        assertEquals(3.0, x, 1.0/1000);
+    }
 }
+
