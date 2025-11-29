@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Introduction to Computer Science 2026, Ariel University,
  * Ex1: arrays, static functions and JUnit
@@ -225,10 +227,21 @@ public class Ex1 {
 	 */
 	public static double area(double[] p1,double[]p2, double x1, double x2, int numberOfTrapezoid) {
 		double ans = 0;
-        /** add you code below
+        /* add you code below */
+         double dx = (x2 - x1) / numberOfTrapezoid;
 
+         for (int i = 0; i < numberOfTrapezoid; i++) {
+         double xi = x1 + i * dx;
+         double xi1 = xi + dx;
+
+         double heightLeft = Math.abs(f(p1, xi) - f(p2, xi));
+         double heightRight = Math.abs(f(p1, xi1) - f(p2, xi1));
+
+         ans += (heightLeft + heightRight) * dx / 2;
+         }
+
+         return ans;
          /////////////////// */
-		return ans;
 	}
 	/**
 	 * This function computes the array representation of a polynomial function from a String
@@ -236,7 +249,7 @@ public class Ex1 {
 	 * getPolynomFromString(poly(p)) should return an array equals to p.
 	 * 
 	 * @param p - a String representing polynomial function.
-	 * @return
+	 * @return array that equals to p
 	 */
 	public static double[] getPolynomFromString(String p) {
 		double [] ans = ZERO;//  -1.0x^2 +3.0x +2.0
@@ -291,30 +304,73 @@ public class Ex1 {
          /////////////////// */
 	/**
 	 * This function computes the polynomial function which is the sum of two polynomial functions (p1,p2)
-	 * @param p1
-	 * @param p2
-	 * @return
+	 * @param p1 - a polynom
+	 * @param p2 - another polynom
+	 * @return polynom made of term-by-term addition of p1 and p2.
 	 */
 	public static double[] add(double[] p1, double[] p2) {
 		double [] ans = ZERO;//
-        /** add you code below
+        /* add you code below */
+         if (p1 == null || p2 == null) return ZERO;
 
+         int maxLen = Math.max(p1.length, p2.length);
+         ans = new double[maxLen];
+
+        for (int i = 0; i < maxLen; i++) {
+            double c1;
+            if (i < p1.length) {
+                c1 = p1[i];      // coefficient exists
+            } else {
+                c1 = 0;          // if out of bounds then treat as 0
+            }
+            double c2;
+            if (i < p2.length) {
+                c2 = p2[i];
+            } else {
+                c2 = 0;
+            }
+            ans[i] = c1 + c2;    // add term-by-term
+        }
+
+         // Remove trailing zeros
+         int last = ans.length - 1;
+         while (last > 0 && Math.abs(ans[last]) < EPS) {
+         last--;
+         }
+
+         return Arrays.copyOf(ans, last + 1);
+         }
          /////////////////// */
-		return ans;
-	}
+
 	/**
 	 * This function computes the polynomial function which is the multiplication of two polynoms (p1,p2)
-	 * @param p1
-	 * @param p2
-	 * @return
+	 * @param p1 - a polynom
+	 * @param p2 - another polynom
+	 * @return a polynom made of term-by-term multiplication of p1 and p2.
 	 */
 	public static double[] mul(double[] p1, double[] p2) {
 		double [] ans = ZERO;//
-        /** add you code below
+        /** add you code below */
+         if (p1 == null || p2 == null) return ans;
 
+         int len = p1.length + p2.length - 1;
+         ans = new double[len];
+
+         for (int i = 0; i < p1.length; i++) {
+         for (int j = 0; j < p2.length; j++) {
+         ans[i + j] += p1[i] * p2[j];
+         }
+         }
+
+         // trim trailing zeros
+         int last = ans.length - 1;
+         while (last > 0 && Math.abs(ans[last]) < EPS) {
+         last--;
+         }
+
+         return Arrays.copyOf(ans, last + 1);
+         }
          /////////////////// */
-		return ans;
-	}
 	/**
 	 * This function computes the derivative of the p0 polynomial function.
 	 * @param po

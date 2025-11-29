@@ -355,5 +355,141 @@ class Ex1Test {
 
         assertEquals(3.0, x, 1.0/1000);
     }
+    // ==================================
+    // test area()
+    @Test
+    void testAreaSimpleTriangle() {
+        double[] p1 = {0, 1};  // x
+        double[] p2 = {0};     // 0
+
+        double area = Ex1.area(p1, p2, 0, 1, 1000);
+
+        assertEquals(0.5, area, 0.01);
+    }
+    @Test
+    void testAreaConstantDifference() {
+        double[] p1 = {5};
+        double[] p2 = {2};
+
+        double area = Ex1.area(p1, p2, 0, 4, 100);
+
+        assertEquals(12.0, area, 0.01);
+    }
+    @Test
+    void testAreaQuadraticVsLine() {
+        double[] p1 = {0,0,1}; // x^2
+        double[] p2 = {0,1};   // x
+
+        double area = Ex1.area(p1, p2, 0, 1, 2000);
+
+        assertEquals(1.0/6.0, area, 0.01);
+    }
+
+    // ===============================
+    // test add()
+    @Test
+    void testAddSimple() {
+        // p1(x) = 2x + 1
+        double[] p1 = {1, 2};
+        // p2(x) = 4x + 3
+        double[] p2 = {3, 4};
+
+        double[] expected = {4, 6};
+        assertArrayEquals(expected, Ex1.add(p1, p2));
+    }
+
+    @Test
+    void testAddDifferentLengths() {
+        // p1(x) = 3x^2 + 2x + 1
+        double[] p1 = {1, 2, 3};
+        // p2(x) = 6x + 5
+        double[] p2 = {5, 6};
+
+        double[] expected = {6, 8, 3};
+        assertArrayEquals(expected, Ex1.add(p1, p2));
+    }
+
+    @Test
+    void testAddZeroPolynomial() {
+        double[] p1 = {2, -3, 5};
+        double[] p2 = {0}; // ZERO polynomial
+
+        double[] expected = {2, -3, 5};
+        assertArrayEquals(expected, Ex1.add(p1, p2));
+    }
+
+    @Test
+    void testAddOpposites() {
+        // p1(x) = x^2 - 2x + 5
+        double[] p1 = {5, -2, 1};
+        // p2(x) = -x^2 + 2x - 5
+        double[] p2 = {-5, 2, -1};
+
+        // Should return ZERO polynomial {0}
+        double[] expected = {0};
+        assertArrayEquals(expected, Ex1.add(p1, p2));
+    }
+
+    @Test
+    void testAddCreatesTrailingZerosButTrimsThem() {
+        double[] p1 = {1, 0, 0};  // actual value = 1
+        double[] p2 = {2};        // actual value = 2
+
+        double[] expected = {3};
+        assertArrayEquals(expected, Ex1.add(p1, p2));
+    }
+
+    @Test
+    void testAddWithNegativeCoefficients() {
+        double[] p1 = {3, -4, 2};    // 2x^2 - 4x + 3
+        double[] p2 = {-1, 5, -2};   // -2x^2 + 5x - 1
+
+        double[] expected = {2, 1, 0}; // 0 is highest-degree term
+        double[] trimmedExpected = {2, 1}; // Must trim zero
+
+        assertArrayEquals(trimmedExpected, Ex1.add(p1, p2));
+    }
+    //===================================================
+    // test mul()
+    @Test
+    void testMulSimple() {
+        // (1 + 2x) * (3 + 4x) = 3 + 10x + 8x^2
+        double[] p1 = {1, 2};
+        double[] p2 = {3, 4};
+
+        double[] expected = {3, 10, 8};
+        assertArrayEquals(expected, Ex1.mul(p1, p2));
+    }
+
+    @Test
+    void testMulDifferentLengths() {
+        // (1 + 2x + 3x^2) * (5 + 6x)
+        // = 5 + 16x + 27x^2 + 18x^3
+        double[] p1 = {1, 2, 3};
+        double[] p2 = {5, 6};
+
+        double[] expected = {5, 16, 27, 18};
+        assertArrayEquals(expected, Ex1.mul(p1, p2));
+    }
+    @Test
+    void testMulByOne() {
+        // Multiply by 1 (identity polynomial)
+        double[] p1 = {5, -2, 7};
+        double[] p2 = {1};
+
+        double[] expected = {5, -2, 7};
+        assertArrayEquals(expected, Ex1.mul(p1, p2));
+    }
+
+    @Test
+    void testMulTrailingZeros() {
+        double[] p1 = {1, 0, 0};
+        double[] p2 = {2};
+
+        double[] expected = {2};
+        assertArrayEquals(expected, Ex1.mul(p1, p2));
+    }
 }
+
+
 
