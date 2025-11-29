@@ -207,12 +207,26 @@ public class Ex1 {
 	 * @return the length approximation of the function between f(x1) and f(x2).
 	 */
 	public static double length(double[] p, double x1, double x2, int numberOfSegments) {
-		double ans = x1;
-        /** add you code below
+        /** add you code below */
+         double dx = (x2 - x1) / numberOfSegments;
+         double total = 0;
 
+         for (int i = 0; i < numberOfSegments; i++) {
+         double xi = x1 + i * dx;
+         double xi1 = xi + dx;
+
+         double yi = f(p, xi);
+         double yi1 = f(p, xi1);
+
+         double dy = yi1 - yi;
+
+         total += Math.sqrt(dx * dx + dy * dy);
+         }
+
+         return total;
+         }
          /////////////////// */
-		return ans;
-	}
+
 	
 	/**
 	 * Given two polynomial functions (p1,p2), a range [x1,x2] and an integer representing the number of Trapezoids between the functions (number of samples in on each polynom).
@@ -373,14 +387,30 @@ public class Ex1 {
          /////////////////// */
 	/**
 	 * This function computes the derivative of the p0 polynomial function.
-	 * @param po
-	 * @return
+	 * @param po - a polynom
+	 * @return the derivative of po.
 	 */
 	public static double[] derivative (double[] po) {
 		double [] ans = ZERO;//
-        /** add you code below
+        /** add you code below */
+         if (po == null || po.length <= 1) {
+         return ans; // derivative of constant is ZERO
+         }
+         ans = new double[po.length - 1];
+
+         for (int i = 1; i < po.length; i++) {
+         ans[i - 1] = po[i] * i;
+         }
+
+         // remove trailing zeros if needed
+         int last = ans.length - 1;
+         while (last > 0 && Math.abs(ans[last]) < EPS) {
+         last--;
+         }
+
+         return Arrays.copyOf(ans, last + 1);
 
          /////////////////// */
-		return ans;
 	}
 }
+

@@ -489,6 +489,46 @@ class Ex1Test {
         double[] expected = {2};
         assertArrayEquals(expected, Ex1.mul(p1, p2));
     }
+
+    //==========================================
+    //derivative
+    @Test
+    void testDerivativeSimple() {
+        // f(x) = 3x^2 + 2x + 1
+        double[] p = {1, 2, 3};
+
+        // f'(x) = 6x + 2  → {2, 6}
+        double[] expected = {2, 6};
+
+        assertArrayEquals(expected, Ex1.derivative(p));
+    }
+    @Test
+    void testDerivativeConstant() {
+        double[] p = {5}; // f(x) = 5
+        assertArrayEquals(Ex1.ZERO, Ex1.derivative(p));
+    }
+    @Test
+    void testDerivativeZero() {
+        assertArrayEquals(Ex1.ZERO, Ex1.derivative(Ex1.ZERO));
+    }
+    @Test
+    void testDerivativeHighDegree() {
+        // f(x) = 4x^4 - 3x^3 + 2x + 7
+        double[] p = {7, 2, 0, -3, 4};
+
+        // f'(x) = 16x^3 - 9x^2 + 2  → {2, 0, -9, 16}
+        double[] expected = {2, 0, -9, 16};
+
+        assertArrayEquals(expected, Ex1.derivative(p));
+    }
+    @Test
+    void testDerivativeTrailingZeros() {
+        // f(x) = 0x^3 + 0x^2 + 5x + 0
+        double[] p = {0, 5, 0, 0};
+
+        // f'(x) = 5 → {5}
+        assertArrayEquals(new double[]{5}, Ex1.derivative(p));
+    }
 }
 
 
